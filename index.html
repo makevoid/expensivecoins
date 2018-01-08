@@ -79,7 +79,7 @@ var Schema = {
       class: 'col name'
     }, {
       class: "col",
-      $text: coin.total_supply + " * $" + new Intl.NumberFormat().format(coin.price_usd)
+      $text: (coin.max_supply || coin.total_supply) + " * $" + new Intl.NumberFormat().format(coin.price_usd)
     }, {
       $text: "$" + new Intl.NumberFormat().format(Math.floor(Schema.metric(coin))),
       class: 'col'
