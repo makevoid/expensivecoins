@@ -47,11 +47,11 @@ h1 {
 /****************************************************************
 
 	Powered by api.coinmarketcap.com
-    
+
     Play around with this by tweaking the schema below!
-    
+
     * Note: Each 'coin' object looks like this:
-    
+
     {
       "id": "bitcoin",
       "name": "Bitcoin",
@@ -69,25 +69,28 @@ h1 {
       "percent_change_7d": "14.61",
       "last_updated": "1515384560"
     }
-    
+
 ****************************************************************/
 
 var Schema = {
+  supply: function(coin) {
+    return coin.max_supply || coin.total_supply;
+  },
   row: function(coin, index) {
     return [{
       $text: "#" + (index+1) + " " + coin.name,
       class: 'col name'
     }, {
       class: "col",
-      $text: (coin.max_supply || coin.total_supply) + " * $" + new Intl.NumberFormat().format(coin.price_usd)
+      $text: this.supply(coin) + " * $" + new Intl.NumberFormat().format(coin.price_usd)
     }, {
       $text: "$" + new Intl.NumberFormat().format(Math.floor(Schema.metric(coin))),
       class: 'col'
     }]
   },
   metric: function(coin) {
-    return parseFloat(coin.total_supply) * parseFloat(coin.price_usd);
-  }  
+    return parseFloat(this.supply(coin)) * parseFloat(coin.price_usd);
+  }
 }
 
 
@@ -103,8 +106,8 @@ var Schema = {
 	Main App Starts Here
 
 ****************************************************************/
-
-ಠᴥಠ = {
+;
+App = {
   $cell: true,
   class: 'container-fluid',
   $components: [{
@@ -147,7 +150,7 @@ var Schema = {
         return Schema.metric(b) - Schema.metric(a);
       })
       this._coins = sorted;
-    }    
+    }
   },
   ForkMe("https://github.com/intercellular/expensivecoins"),
   {
